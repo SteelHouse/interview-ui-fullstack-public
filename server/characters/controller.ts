@@ -58,6 +58,7 @@ export async function downloadCharacters(
           `${ch.id}, ${ch.name}, ${ch.weight}, ${ch.height}, ${ch.species}\n`
         )
       );
+      // console.
     });
 
     // Interviewee task
