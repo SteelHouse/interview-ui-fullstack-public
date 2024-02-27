@@ -14,8 +14,10 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   const authData = Buffer.from(auth.split("Basic ")[1], "base64")
     .toString()
     .split(":");
-  const email = '';
-  const password = '';
+
+  console.dir(authData);
+  const [email, password] = authData;
+  console.log(`authing user email is ${email}, pw is ${password}`);
 
   // check user exists
   const user = await prisma.user.findFirst({
@@ -23,7 +25,11 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     where: { email, password },
   });
 
-  if (!user) {}
+  console.dir(user);
+
+  if (!user) {
+    res.status(404).json({error: 'No account found with that username and password. Off to the Sarlacc with you!'});
+  }
 
   // check user role - prevent role=`dark_side` from logging in
   // throw a DarkSideError

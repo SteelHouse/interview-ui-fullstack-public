@@ -12,10 +12,16 @@ const login = async ({
   email: string;
   password: string;
 }) => {
-  const res = await fetch(getApiUrl("/auth/login"), {
+  // Interviewee Task - send appropriate headers for basic auth
+  const loginRequestOptions = {
     method: "POST",
-    // Interviewee Task - add basic auth headers for login
-  });
+    headers: {
+      "Authorization": `Basic ${btoa(`${email}:${password}`)}`,
+    },
+  };
+  console.dir(loginRequestOptions);
+  const res = await fetch(getApiUrl("/auth/login"), loginRequestOptions);
+  console.dir(res);
   return res.json();
 };
 
@@ -37,7 +43,7 @@ export const Login = () => {
       // Interviewee Task - store token and redirect to previous path or /
       if (data.token) {
         setToken(data.token);
-        await queryClient.fetchQuery({queryKey:["me"]}); // csw : there's an issue here: "Argument of type 'string[]' is not assignable to parameter of type 'FetchQueryOptions<unknown, Error, unknown, QueryKey, never>'"
+        await queryClient.fetchQuery({queryKey:["me"]});
         nav(location?.state?.path ?? "/");
       }
     },
@@ -53,10 +59,14 @@ export const Login = () => {
     [doLogin, loginState]
   );
 
+  console.log('doLogin:');
+  console.dir(doLogin);
+
   return (
     <>
       <form autoComplete="off" onSubmit={handleSubmit}>
         {!!doLogin.error && <span className="error">Error Logging in.</span>}
+        {(doLogin.data && !!doLogin.data.error) && <span className="error">{doLogin.data.error}</span>}
         <label htmlFor="email">
           Email
           <input
