@@ -37,7 +37,7 @@ export const Login = () => {
       // Interviewee Task - store token and redirect to previous path or /
       if (data.token) {
         setToken(data.token);
-        await queryClient.fetchQuery(["me"]);
+        await queryClient.fetchQuery({queryKey:["me"]}); // csw : there's an issue here: "Argument of type 'string[]' is not assignable to parameter of type 'FetchQueryOptions<unknown, Error, unknown, QueryKey, never>'"
         nav(location?.state?.path ?? "/");
       }
     },

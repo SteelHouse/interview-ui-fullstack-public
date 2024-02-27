@@ -40,11 +40,13 @@ function App() {
     queryKey: ["readme"],
     queryFn: getREADME,
     retry: 1,
-    cacheTime: 100000,
+    staleTime: 100000,
   });
 
-  const { isLoading, data, remove } = useQuery<User, { error: string }>({
-    queryKey: ["me"],
+  // NOTE: getting rid of 'remove' for now so I can move on to the rest - docs say it should be working / valid, but it's not
+  // const { isLoading, data, remove } = useQuery<User, { error: string }>({
+  const { isLoading, data } = useQuery<User, { error: string }>({
+      queryKey: ["me"],
     queryFn: getMe,
     retry: false,
     refetchOnWindowFocus: false,
@@ -56,7 +58,8 @@ function App() {
     retry: false,
     onSuccess(success) {
       if (success) {
-        remove();
+        // cutting this out to get past the error
+        // remove();
         removeToken();
         navigate("/");
       }
