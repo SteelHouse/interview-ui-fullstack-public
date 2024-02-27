@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "scripts": {
     "bootstrap": "npm ci && npm run prisma:setup && npm start",
-    "start": "concurrently \"nodemon --exec ts-node ./server/server.ts\" \"PORT=5002 npm run client\"",
+    "start": "concurrently \"nodemon --exec ts-node ./server/server.ts\" \"npx cross-env PORT=5002 npm run client\"",
     "client": "npm start --prefix client",
     "interview": "npx ts-node ./scripts/interview.ts branch",
-    "prisma:setup": "rm -rf ./prisma/migrations ./prisma/dev.db ./prisma/dev.db-journal && prisma migrate dev --name init",
-    "generate:seedfile": "rm -rf ./prisma/characters.json && ts-node prisma/character-json-seed.ts"
+    "prisma:setup": "npx rimraf -rf ./prisma/migrations ./prisma/dev.db ./prisma/dev.db-journal && prisma migrate dev --name init",
+    "generate:seedfile": "npx rimraf ./prisma/characters.json && ts-node prisma/character-json-seed.ts"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
