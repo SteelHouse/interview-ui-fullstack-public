@@ -41,6 +41,8 @@ export const Login = () => {
     mutationFn: login,
     onSuccess: async (data) => {
       // Interviewee Task - store token and redirect to previous path or /
+      console.log('login success');
+      console.dir(data);
       if (data.token) {
         setToken(data.token);
         await queryClient.fetchQuery({queryKey:["me"]});
