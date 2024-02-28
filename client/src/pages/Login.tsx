@@ -16,7 +16,7 @@ const login = async ({
   const loginRequestOptions = {
     method: "POST",
     headers: {
-      "Authorization": `Basic ${btoa(`${email}:${password}`)}`,
+      "Authorization": `Basic ${Buffer.from(`${email}:${password}`).toString('base64')}`,
     },
   };
   console.dir(loginRequestOptions);
@@ -55,6 +55,9 @@ export const Login = () => {
         nav(location?.state?.path ?? "/");
       }
     },
+    onError: () => {
+      setLoggedInState(false);
+    },
   });
 
   const handleSubmit = useCallback(
@@ -68,8 +71,8 @@ export const Login = () => {
     [doLogin, loginState]
   );
 
-  console.log('doLogin:');
-  console.dir(doLogin);
+  // console.log('doLogin:');
+  // console.dir(doLogin);
 
   return (
     <>
