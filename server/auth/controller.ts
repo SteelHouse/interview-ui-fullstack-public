@@ -66,12 +66,12 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     res.status(200).json(userWithAuthToken);
   } catch (err) {
     if (err instanceof DarkSideError) {
-      res.status(401).json({
+      return res.status(401).json({
         errorMessage: "No sith allowed! Off to the Sarlacc with you!", 
         error: err
       });
     } else {
-      res.status(500).json({error:err});
+      return res.status(500).json({error:err});
     }
   }
 }

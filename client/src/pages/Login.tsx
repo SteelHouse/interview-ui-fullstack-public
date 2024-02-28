@@ -26,7 +26,7 @@ const login = async ({
 };
 
 export const Login = () => {
-  const { loggedIn } = useAuthContext();
+  const { loggedIn, setLoggedInState } = useAuthContext();
   const location = useLocation();
   const nav = useNavigate();
   const queryClient = useQueryClient();
@@ -45,14 +45,18 @@ export const Login = () => {
       console.dir(data);
       if (data.token) {
         setToken(data.token);
-        const userDataFetched = await queryClient.fetchQuery({queryKey:["me"]});
-        console.log('user data from /me endpoint');
-        console.dir(userDataFetched);
+        setLoggedInState(true);
+        await queryClient.fetchQuery({queryKey:["me"]});
+        // const userDataFetched = await queryClient.fetchQuery({queryKey:["me"]});
+        // console.log('user data from /me endpoint');
+        // console.dir(userDataFetched);
+        console.log('location is:');
+        console.dir(location);
         nav(location?.state?.path ?? "/");
       }
     },
   });
-  
+
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
