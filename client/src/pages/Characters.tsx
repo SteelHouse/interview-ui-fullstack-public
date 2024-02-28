@@ -65,6 +65,12 @@ export const Characters = () => {
 
   // Interviewee Task - describe
   //  where a better place for this code could be or in general checking authenticated routes/access
+  // CSW: while this works... this seems like the kind of functionality that would be needed in many 
+  // places, so there should be a way to generalize it and put it at a higher level. There should be
+  // a way to protect paths at the router level, I think. Probably want a general component that 
+  // implements route protection and put that in the createBrowserRoutes call that's in index.tsx. Some
+  // quick googling and doc review suggests this should be very doable.
+
   useEffect(() => {
     if (!authing && !loggedIn) {
       nav("/login", {
