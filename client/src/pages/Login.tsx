@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../components/AuthContext";
-import { setToken } from "../utils/getToken";
+import { removeToken, setToken } from "../utils/getToken";
 import { getApiUrl } from "../utils/url";
 
 const login = async ({
@@ -16,7 +16,7 @@ const login = async ({
   const loginRequestOptions = {
     method: "POST",
     headers: {
-      "Authorization": `Basic ${Buffer.from(`${email}:${password}`).toString('base64')}`,
+      "Authorization": `Basic ${btoa(`${email}:${password}`)}`,
     },
   };
   console.dir(loginRequestOptions);
@@ -57,12 +57,14 @@ export const Login = () => {
     },
     onError: () => {
       setLoggedInState(false);
+      removeToken();
     },
   });
 
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      console.log('doing doLogin.mutate on handling submit');
       doLogin.mutate({
         email: loginState.email,
         password: loginState.password,
@@ -71,8 +73,8 @@ export const Login = () => {
     [doLogin, loginState]
   );
 
-  // console.log('doLogin:');
-  // console.dir(doLogin);
+  console.log('doLogin:');
+  console.dir(doLogin);
 
   return (
     <>
