@@ -66,7 +66,7 @@ export const Login = () => {
     <>
       <form autoComplete="off" onSubmit={handleSubmit}>
         {!!doLogin.error && <span className="error">Error Logging in.</span>}
-        {(doLogin.data && !!doLogin.data.error) && <span className="error">{doLogin.data.error}</span>}
+        {(!!doLogin.data && !!doLogin.data.errorMessage) && <span className="error">{doLogin.data.errorMessage}</span>}
         <label htmlFor="email">
           Email
           <input

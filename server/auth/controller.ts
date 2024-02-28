@@ -3,6 +3,9 @@ import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { DarkSideError } from "../utils/Errors";
 
+const ROLE_DARKSIDE = 'dark_side';
+const ROLE_JEDI = 'jedi';
+
 export async function login(req: Request, res: Response, next: NextFunction) {
   const auth = req.headers["authorization"] as string;
   if (!/^Basic/i.test(auth)) {
@@ -28,11 +31,20 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   console.dir(user);
 
   if (!user) {
-    res.status(404).json({error: 'No account found with that username and password. Off to the Sarlacc with you!'});
+    res.status(404).json({error: "These are'nt the account name and password you are looking for. You can go about your business. Move along."});
   }
 
   // check user role - prevent role=`dark_side` from logging in
   // throw a DarkSideError
+  if (user && user.role == ROLE_DARKSIDE) {
+    console.log("darkside user");
+    // The instruction say to throw an error here, but I think it makes more sense to return an unauthorized response
+    //throw new DarkSideError("No sith allowed! Off to the Sarlacc with you!");
+    res.status(401).json({
+      errorMessage: "No sith allowed! Off to the Sarlacc with you!", 
+      error: new DarkSideError("No sith allowed! Off to the Sarlacc with you!")
+    });
+  }
 
   // create and sign jwt with user
   // jwt.sign - set expire to 15min
