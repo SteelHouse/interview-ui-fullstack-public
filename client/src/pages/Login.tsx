@@ -45,11 +45,14 @@ export const Login = () => {
       console.dir(data);
       if (data.token) {
         setToken(data.token);
-        await queryClient.fetchQuery({queryKey:["me"]});
+        const userDataFetched = await queryClient.fetchQuery({queryKey:["me"]});
+        console.log('user data from /me endpoint');
+        console.dir(userDataFetched);
         nav(location?.state?.path ?? "/");
       }
     },
   });
+  
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
