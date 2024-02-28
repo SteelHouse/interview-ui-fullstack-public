@@ -1,16 +1,32 @@
 .character-list {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
   grid-template-columns: 1fr;
   place-content: center;
 }
 
 /* Interviewee - add styles for the character list layouts */
 /* screen >= `30rem`, `2` per row */
+/* csw: took some research to learn how to get to screen size in css... now I know */
+@media screen and (min-width: 30rem) {
+  .character-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 /* screen >= `40rem`, `3` per row */
+@media screen and (min-width: 40rem) {
+  .character-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 
 /* screen >= `70rem`, `4` per row */
+@media screen and (min-width: 70rem) {
+  .character-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
 
 .character {
   --bg-color: 66, 170, 255;

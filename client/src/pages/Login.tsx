@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../components/AuthContext";
-import { setToken } from "../utils/getToken";
+import { removeToken, setToken } from "../utils/getToken";
 import { getApiUrl } from "../utils/url";
 
 const login = async ({
@@ -12,15 +12,21 @@ const login = async ({
   email: string;
   password: string;
 }) => {
-  const res = await fetch(getApiUrl("/auth/login"), {
+  // Interviewee Task - send appropriate headers for basic auth
+  const loginRequestOptions = {
     method: "POST",
-    // Interviewee Task - add basic auth headers for login
-  });
+    headers: {
+      "Authorization": `Basic ${btoa(`${email}:${password}`)}`,
+    },
+  };
+  console.dir(loginRequestOptions);
+  const res = await fetch(getApiUrl("/auth/login"), loginRequestOptions);
+  console.dir(res);
   return res.json();
 };
 
 export const Login = () => {
-  const { loggedIn } = useAuthContext();
+  const { loggedIn, setLoggedInState } = useAuthContext();
   const location = useLocation();
   const nav = useNavigate();
   const queryClient = useQueryClient();
@@ -35,16 +41,30 @@ export const Login = () => {
     mutationFn: login,
     onSuccess: async (data) => {
       // Interviewee Task - store token and redirect to previous path or /
+      console.log('login success');
+      console.dir(data);
       if (data.token) {
         setToken(data.token);
-        await queryClient.fetchQuery(["me"]);
+        setLoggedInState(true);
+        await queryClient.fetchQuery({queryKey:["me"]});
+        // const userDataFetched = await queryClient.fetchQuery({queryKey:["me"]});
+        // console.log('user data from /me endpoint');
+        // console.dir(userDataFetched);
+        console.log('location is:');
+        console.dir(location);
         nav(location?.state?.path ?? "/");
       }
     },
+    onError: () => {
+      setLoggedInState(false);
+      removeToken();
+    },
   });
+
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      console.log('doing doLogin.mutate on handling submit');
       doLogin.mutate({
         email: loginState.email,
         password: loginState.password,
@@ -53,10 +73,14 @@ export const Login = () => {
     [doLogin, loginState]
   );
 
+  console.log('doLogin:');
+  console.dir(doLogin);
+
   return (
     <>
       <form autoComplete="off" onSubmit={handleSubmit}>
         {!!doLogin.error && <span className="error">Error Logging in.</span>}
+        {(!!doLogin.data && !!doLogin.data.errorMessage) && <span className="error">{doLogin.data.errorMessage}</span>}
         <label htmlFor="email">
           Email
           <input
